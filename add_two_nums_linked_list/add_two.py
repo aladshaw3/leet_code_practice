@@ -46,7 +46,7 @@ class Solution(object):
 
         return result
 
-    def addTwoNumbers_me_the_idiot(self, l1, l2):
+    def addTwoNumbers_me(self, l1, l2):
         """
         :type l1: ListNode
         :type l2: ListNode
@@ -127,7 +127,7 @@ e.next = None
 
 
 res = Solution()
-ll = res.addTwoNumbers_me_the_idiot(a,d)
+ll = res.addTwoNumbers_me(a,d)
 print(ll.val)
 while (ll.next != None):
     ll = ll.next
