@@ -21,7 +21,7 @@ Example 3:
 Input: nums = [3,3], target = 6
 Output: [0,1]
 
- 
+
 
 Constraints:
 
@@ -43,15 +43,15 @@ class Solution(object):
         Space complexity O(n)
 
         How it works...
-            Dynamically build a hash table of prior values 
-            observed. Start by calculating the value needed 
+            Dynamically build a hash table of prior values
+            observed. Start by calculating the value needed
             based on the current iterate value 'n' and the target.
-            Search the hashtable for the needed value 'm'. If not 
-            present, store current iterate value in hashtable and 
-            continue. 
+            Search the hashtable for the needed value 'm'. If not
+            present, store current iterate value in hashtable and
+            continue.
 
-            The hashtable grows with each iteration and will be at 
-            most O(n) in size. 
+            The hashtable grows with each iteration and will be at
+            most O(n) in size.
         """
         hashmap = {}
         for i, n in enumerate(nums):
@@ -67,11 +67,11 @@ class Solution(object):
         :rtype: List[int]
 
         Time complexity O(n^2)
-        Space complexity O(1) 
+        Space complexity O(1)
 
 	How it works...
-	    Iterate through the loop 2x times in an outer and 
-            inner loop. Check the sum and report. 
+	    Iterate through the loop 2x times in an outer and
+            inner loop. Check the sum and report.
         """
         for i in range(len(nums)):
             for j in range(i + 1, len(nums)):
