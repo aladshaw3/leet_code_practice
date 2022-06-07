@@ -77,7 +77,7 @@ def power_sys_fun(x, mapping):
     G2 = np.array([0, 0, 7.46, -7.46, 0])
     B2 = np.array([0, 0, -99.44, 99.44, 0])
     G3 = np.array([0, -0.89, -7.46, 11.92, -3.57])
-    B3 = np.array([0, 9.92, 99.44, 147.96, 39.68])
+    B3 = np.array([0, 9.92, 99.44, -147.96, 39.68])
     G4 = np.array([-3.73, -1.79, 0, -3.57, 9.09])
     B4 = np.array([49.72, 19.84, 0, 39.68, -108.58])
 
@@ -129,12 +129,34 @@ def power_sys_fun(x, mapping):
 # Example of mapping (to use later)
 mapping = [{"G": {(0,0): 3.73, (0,1): 0,} }]
 
-x0 = np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
-#print(power_sys_fun(x0, mapping))
-res_1 = least_squares(power_sys_fun, x0, args=mapping, ftol=1e-15, gtol=1e-15, xtol=1e-15)
-print(res_1)
+# Solution (from literature):
+#x0 = np.array([3.948, 1.144, 0.834, -0.39, 3.376-0.4, -0.0104, 1.019, -0.049462631, 0.974, -0.07941248])
 
+# NOTE: Important to give 'good' initial guess.
+#       A bad initial guess results in a different solution
+#   This initial guess was same as given in literature and
+#   we get to same solution as literature solution
+x0 = np.array([0, 0, 1, 0, 0, 0, 1, 0, 1, 0])
+'''
+# Unknowns (map for reference)
+P0 = x[0]
+Q0 = x[1]
+V1 = x[2]
+d1 = x[3]
+Q2 = x[4]
+d2 = x[5]
+V3 = x[6]
+d3 = x[7]
+V4 = x[8]
+d4 = x[9]
+'''
+# Call solver
+res_1 = least_squares(power_sys_fun, x0, args=mapping, ftol=1e-10, gtol=1e-10, xtol=1e-10, verbose=2)
+# Print results
+print()
+print(res_1)
+print()
+
+# Check results by manually calling res func
 x0 = res_1.x
 print(power_sys_fun(x0, mapping))
-#res_1 = least_squares(power_sys_fun, x0, args=mapping)
-#print(res_1)
