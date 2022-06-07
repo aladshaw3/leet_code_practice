@@ -10,7 +10,9 @@ import numpy as np
 
 '''
 def fun_rosenbrock(x, mapping):
-    return np.array([mapping["a"] * (x[1] - x[0]**2), (1 - x[0])])
+    X1 = x[1]
+    X0 = x[0]
+    return np.array([mapping["a"] * (X1 - X0**2), (1 - X0)])
 
 
 mapping = [{"a": 10}]
@@ -112,12 +114,27 @@ def power_sys_fun(x, mapping):
     res[8] = _Pres(P, V, G, B, d, 4)
     res[9] = _Qres(Q, V, G, B, d, 4)
 
-    return res
+    # NOTE: Did not allow me to return res for some reason
+    return np.array([_Pres(P, V, G, B, d, 0),
+                    _Qres(Q, V, G, B, d, 0),
+                    _Pres(P, V, G, B, d, 1),
+                    _Qres(Q, V, G, B, d, 1),
+                    _Pres(P, V, G, B, d, 2),
+                    _Qres(Q, V, G, B, d, 2),
+                    _Pres(P, V, G, B, d, 3),
+                    _Qres(Q, V, G, B, d, 3),
+                    _Pres(P, V, G, B, d, 4),
+                    _Qres(Q, V, G, B, d, 4)])
 
 # Example of mapping (to use later)
 mapping = [{"G": {(0,0): 3.73, (0,1): 0,} }]
 
-x0 = np.array([1, 0, 1, 0, 0, 1, 0, 0, 1, 0])
+x0 = np.array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
 #print(power_sys_fun(x0, mapping))
-res_1 = least_squares(power_sys_fun, x0, args=mapping)
+res_1 = least_squares(power_sys_fun, x0, args=mapping, ftol=1e-15, gtol=1e-15, xtol=1e-15)
 print(res_1)
+
+x0 = res_1.x
+print(power_sys_fun(x0, mapping))
+#res_1 = least_squares(power_sys_fun, x0, args=mapping)
+#print(res_1)
