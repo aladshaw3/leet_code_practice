@@ -45,7 +45,7 @@ print(res_1)
         x[9] = d4
 '''
 def power_sys_fun(x, mapping):
-    # Knowns
+    # Knowns (Given from circuit diagram)
     V0 = 1
     d0 = 0
     P1 = -8
@@ -57,7 +57,7 @@ def power_sys_fun(x, mapping):
     P4 = 0
     Q4 = 0
 
-    # Unknowns
+    # Unknowns (vars we are solving for, and how they manually map)
     P0 = x[0]
     Q0 = x[1]
     V1 = x[2]
@@ -69,7 +69,9 @@ def power_sys_fun(x, mapping):
     V4 = x[8]
     d4 = x[9]
 
-    # Vectors
+    # Vectors (These come from the Y-bus matrix)
+    #       Can optimize my only storing half this info
+    #       because Y-bus matrix is symmetric 
     G0 = np.array([3.73, 0, 0, 0, -3.73])
     B0 = np.array([-49.72, 0, 0, 0, 49.72])
     G1 = np.array([0, 2.68, 0, -0.89, -1.79])
@@ -89,6 +91,7 @@ def power_sys_fun(x, mapping):
     G = np.array([G0, G1, G2, G3, G4])
     B = np.array([B0, B1, B2, B3, B4])
 
+    # Vectorized forms of the residuals
     def _Pres(P, V, G, B, d, k):
         return P[k] - (V[k] * sum( V * (G[k]*np.cos(d[k]-d) + B[k]*np.sin(d[k]-d)) ))
 
