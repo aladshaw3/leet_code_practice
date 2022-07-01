@@ -38,7 +38,15 @@ source := $(wildcard $(SRC)/*.cpp)
 objs := $(patsubst %, $(BIN)/%, $(notdir $(source:.cpp=.o)))
 
 # This is just telling what gets made when calling 'make' or 'make all'
-all: $(target)
+# 	In this case, we specify that the 'dir' for 'bin' must be created
+#		prior to building our target
+all: dir $(target)
+
+# The 'dir' recipie just issues a command line instruction to make a
+#		directory named 'bin'. The -p argument prevents errors from occuring
+#		if such a directory already exists. 
+dir:
+	mkdir -p bin
 
 # To use variables, you encapsulate the variable name inside $(...)
 #		Automatic variables:
