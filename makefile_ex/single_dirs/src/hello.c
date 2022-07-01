@@ -4,5 +4,5 @@
 // Define how the function 'hello' behaves
 void hello()
 {
-  std::cout << "Hello" << std::endl;
+  printf("Hello\n");
 }

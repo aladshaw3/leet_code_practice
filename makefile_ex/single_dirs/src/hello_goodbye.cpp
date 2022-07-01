@@ -7,6 +7,6 @@ void hello_goodbye()
   // Call the function from hello.h, which was included in hello_goodbye.h
   hello();
 
-  // Add an additional message 
+  // Add an additional message
   std::cout << "Goodbye" << std::endl;
 }

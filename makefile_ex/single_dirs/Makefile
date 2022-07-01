@@ -1,3 +1,6 @@
+# NOTE: Need to figure out how to compile .c and .cpp files
+#		(just use same compiler)
+
 # Now we will create a more organized project folder where
 #	cpp files go into a 'src' folder, headers into a 'inc' folder,
 #	and objects/deps go into a 'bin' folder
@@ -19,8 +22,8 @@ NC = \033[1;0m
 #		'=' evaluates when needed, so if something it depends on changes, it also changes
 CC := gcc
 CXX := g++
-CFLAGS := -Wall -Werror
-CXXFLAGS := -Wall -Werror -std=c++11
+CFLAGS := -O3 -Wall -Werror
+CXXFLAGS := -O3 -Wall -Werror -std=c++11
 
 # Additional variables to make the target name and list of objects
 # 	Use 'wildcard' function to go into the 'src' directory and create
@@ -34,8 +37,14 @@ CXXFLAGS := -Wall -Werror -std=c++11
 #	Then, that is also embedded into the patsubst function to add the bin
 #		directory to the objects (which is where we want them)
 target := output
-source := $(wildcard $(SRC)/*.cpp)
-objs := $(patsubst %, $(BIN)/%, $(notdir $(source:.cpp=.o)))
+
+c_source := $(wildcard $(SRC)/*.c)
+cpp_source := $(wildcard $(SRC)/*.cpp)
+source := $(cpp_source) $(c_source)
+
+c_objs := $(patsubst %, $(BIN)/%, $(notdir $(c_source:.c=.o) ) )
+cpp_objs := $(patsubst %, $(BIN)/%, $(notdir $(cpp_source:.cpp=.o) ) )
+objs := $(cpp_objs) $(c_objs)
 
 # This is just telling what gets made when calling 'make' or 'make all'
 # 	In this case, we specify that the 'dir' for 'bin' must be created
@@ -44,7 +53,7 @@ all: dir $(target)
 
 # The 'dir' recipie just issues a command line instruction to make a
 #		directory named 'bin'. The -p argument prevents errors from occuring
-#		if such a directory already exists. 
+#		if such a directory already exists.
 dir:
 	mkdir -p bin
 
@@ -72,6 +81,11 @@ DEPFLAGS = -MMD -MF $(@:.o=.d)
 $(BIN)/%.o: $(SRC)/%.cpp
 	@echo "$(GREEN)Compiling...$(NC)"
 	$(CXX) $(CXXFLAGS) -c $< $(DEPFLAGS) -I$(INC) -o $@
+
+# How to handle .c files
+$(BIN)/%.o: $(SRC)/%.c
+	@echo "$(GREEN)Compiling...$(NC)"
+	$(CXX) $(CFLAGS) -c $< $(DEPFLAGS) -I$(INC) -o $@
 
 # Use the .PHONY target as a list of names to append to the make command
 .PHONY: clean help
