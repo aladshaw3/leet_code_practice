@@ -15,9 +15,9 @@
 #	which depends on the objects of 'main.o' and 'hello.o'
 #	and is created with the command: g++ main.o hello.o -o output
 #	This command is using g++ to link objects main and hello together
-#	to create an executable named output
+#	to create an executable named output.app
 output: main.o hello.o
-	g++ main.o hello.o -o output
+	g++ main.o hello.o -o output.app
 
 # Now we should define how main.o and hello.o are created
 #	The '-c' flag instructs the build to just compile the
@@ -26,7 +26,7 @@ output: main.o hello.o
 # NOTE: This instruction is only run if there is a change in
 #	main.cpp. However, this may not be the behavior we want, because
 #	main.cpp includes the header 'hello.h'. Thus, if we change something
-# in that header, this may not get rebuilt. 
+# in that header, this may not get rebuilt.
 main.o: main.cpp
 	g++ -c main.cpp
 
@@ -38,4 +38,4 @@ hello.o: hello.cpp hello.h
 #	the object files and executable
 clean:
 	rm *.o
-	rm output
+	rm output.app

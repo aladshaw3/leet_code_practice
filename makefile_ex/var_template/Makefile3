@@ -1,0 +1,39 @@
+# NOTE: We are still assuming that all files are in same directory
+
+# In 'Makefile2', we showed how to use variables and automatic variables, however
+# we still have 2 recipies (main.o and hello.o) that are basically the same. Thus,
+# in this file we will replace those redundant methods with 'patterns'
+
+# Define variables
+#		':=' evaluates only once, so it is what it is now
+#		'=' evaluates when needed, so if something it depends on changes, it also changes
+CC := gcc
+CXX := g++
+CFLAGS := -Wall -Werror
+CXXFLAGS := -Wall -Werror -std=c++11
+
+# Additional variables to make the target name and list of objects
+target := output
+objs := main.o hello.o
+
+# This is just telling what gets made when calling 'make' or 'make all'
+all: $(target)
+
+# To use variables, you encapsulate the variable name inside $(...)
+#		Automatic variables:
+#				$^ = replaces name of all dependencies
+#				$@ = replaces the name of the target
+#				$< = replaces name of the first dependency
+output: $(objs)
+	$(CXX) $(CXXFLAGS) $^ -o $@.app
+
+# The '%' symbol instructs the makefile that this same set of commands
+# should be applied to all '.o' targets with a matching '.cpp' dependency
+#   (i.e., % replaced the specific names)
+#   [Tells compiler how to create the object from the corresponding cpp file]
+
+%.o: %.cpp hello.h
+	$(CXX) $(CXXFLAGS) -c $<
+
+clean:
+	rm $(objs) $(target).app

@@ -1,0 +1,30 @@
+# In 'Makefile', we showed how to use variables in our commands, now we
+#	will extend that to use more templating and automatic variables
+
+# Define variables
+#		':=' evaluates only once, so it is what it is now
+#		'=' evaluates when needed, so if something it depends on changes, it also changes
+CC := gcc
+CXX := g++
+CFLAGS := -Wall -Werror
+CXXFLAGS := -Wall -Werror -std=c++11
+
+# This is just telling what gets made when calling 'make' or 'make all'
+all: output
+
+# To use variables, you encapsulate the variable name inside $(...)
+#		Automatic variables:
+#				$^ = replaces name of all dependencies
+#				$@ = replaces the name of the target
+#				$< = replaces name of the first dependency 
+output: main.o hello.o
+	$(CXX) $(CXXFLAGS) $^ -o $@.app
+
+main.o: main.cpp hello.h
+	$(CXX) $(CXXFLAGS) -c $<
+
+hello.o: hello.cpp hello.h
+	$(CXX) $(CXXFLAGS) -c $<
+
+clean:
+	rm *.o output.app

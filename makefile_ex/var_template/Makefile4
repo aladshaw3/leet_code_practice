@@ -1,0 +1,71 @@
+# NOTE: We are still assuming that all files are in same directory
+
+# In 'Makefile3', we showed how to use variables and automatic variables, and
+# used some basic patterns to remove redundancy. However, we still had manually
+# defined the the object files had the specific header file (hello.h) as a dependency.
+# In this example, we will automatically determine the dependencies and incorporate
+# those into the recipies for the object files.
+
+# Define variables
+#		':=' evaluates only once, so it is what it is now
+#		'=' evaluates when needed, so if something it depends on changes, it also changes
+CC := gcc
+CXX := g++
+CFLAGS := -Wall -Werror
+CXXFLAGS := -Wall -Werror -std=c++11
+
+# Additional variables to make the target name and list of objects
+target := output
+objs := main.o hello.o
+
+# This is just telling what gets made when calling 'make' or 'make all'
+all: $(target)
+
+# To use variables, you encapsulate the variable name inside $(...)
+#		Automatic variables:
+#				$^ = replaces name of all dependencies
+#				$@ = replaces the name of the target
+#				$< = replaces name of the first dependency
+output: $(objs)
+	$(CXX) $(CXXFLAGS) $^ -o $@.app
+
+# The '%' symbol instructs the makefile that this same set of commands
+# should be applied to all '.o' targets with a matching '.cpp' dependency
+#   (i.e., % replaced the specific names)
+#   [Tells compiler how to create the object from the corresponding cpp file]
+
+# Lastly, we need to swap 'hello.h' for a more generic form of dependency tracking
+#		We can use gcc/g++ to automatically generate the dependency information
+#				Command Line Example:
+#							g++ -Wall -Werror -std=c++11 -c main.cpp -MMD -MF main.d
+#				This will generate a main.d file that contains the set of dependencies
+#				needed to compile the main.cpp file into a main.o object
+#						'main.d' = result file listing dependencies
+#						'-MMD -MF' = flags that generate the dependency info
+
+# New variables for dependency tracking
+#   patsubst = Function called pattern substitution
+#         SYNTAX:   $(patsubst 'pattern', 'replacement', 'text')
+#         Function will find words in 'text' that match 'pattern'
+#           and replaces them with 'replacement'
+#
+#   the '-include' directive instructs the makefile to read one or more
+#     other makefiles before continuing
+#         (Here, the make file will read the constructed .d files before continuing)
+#
+#   DEPFLAGS = variable that includes the flags needed to construct dependencies (-MMD -MF)
+#       the '$(@:.o=.d)' is a quick function that will be used to specify the
+#       name of the .d file to create. In this case, it takes the name of the
+#       target (denoted by the @ sign) and replaces the target's file extension
+#       (.o) with the extension for the dependency file (.d)
+deps := $(patsubst %.o,%.d,$(objs))
+-include $(deps)
+DEPFLAGS = -MMD -MF $(@:.o=.d)
+
+%.o: %.cpp
+	$(CXX) $(CXXFLAGS) -c $< $(DEPFLAGS)
+
+# Make sure that we keep updating the clean method to wipe away all
+# intermediate files (objects, dependencies, etc) that get created
+clean:
+	rm $(objs) $(deps) $(target).app
