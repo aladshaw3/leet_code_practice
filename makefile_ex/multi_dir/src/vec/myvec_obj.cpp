@@ -7,11 +7,13 @@
 myvec::myvec()
 {
     this->Data.resize(1);
+    this->p = createAdder();
 }
 
 myvec::~myvec()
 {
     this->Data.clear();
+    deleteAdder(this->p);
 }
 
 void myvec::set_data_size(int size)

@@ -1,11 +1,16 @@
 #ifndef _MYVEC_OBJ_
 #define _MYVEC_OBJ_
 
-#include <vector>  
+#include <vector>
+#include "adder/adder_wrapper.h"
+
+// Below is also valid because of makefile struct
+//#include "adder_wrapper.h"
 
 class myvec {
 private:
-    std::vector<int> Data; 
+    std::vector<int> Data;
+    void *p;
 public:
     myvec();
     ~myvec();
