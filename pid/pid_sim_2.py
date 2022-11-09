@@ -19,9 +19,13 @@ def error_value(target, state):
 class Controller(object):
     # Default constructor
     def __init__(self):
+        # States of current and old actions
         self.current_action = 0
         self.old_action = 0
         self.older_action = 0
+
+        # Optional integral error term
+        self.integral = 0
 
     ############ FINISH THIS FUNCTION #################
     def ReturnAction(self, older_time: float,
@@ -35,30 +39,60 @@ class Controller(object):
                         older_dev_state: float,
                         old_dev_state: float,
                         current_dev_state: float) -> float:
-        # Simplest
-        #current_error = error_value(current_target, current_dev_state)
-        #return current_error
+        # Simplest (P controller with gain=1)
+        '''
+        current_error = error_value(current_target, current_dev_state)
+        return current_error
+        '''
+
 
         # PID
+
+        e = error_value(current_target, current_dev_state)
+        e_old = error_value(old_target, old_dev_state)
+        dt = current_time - old_time
+
+        Kp = 1
+        KI = 0.75
+        KD = 0.05
+        self.integral = self.integral + e*dt
+
+        return Kp*e + KD*(e-e_old)/dt + KI*self.integral
+
+
+
+        # PID - Alt (more complex version in terms of differential actions)
+        '''
+        Kp = 1
+        KI = 0.75
+        KD = 0.05
+        dt = current_time - old_time
+        A0 = Kp + KI*dt + KD/dt
+        A1 = -Kp - 2*KD/dt
+        A2 = KD/dt
         e = error_value(current_target, current_dev_state)
         e_old = error_value(old_target, old_dev_state)
         e_older = error_value(older_target, older_dev_state)
+        return self.current_action + A0*e + A1*e_old + A2*e_older
+        '''
+
+        # P controller
+        '''
+        e = error_value(current_target, current_dev_state)
+        Kp = 0.5
+        return Kp*e
+        '''
+
+        # PI controller
+        '''
+        e = error_value(current_target, current_dev_state)
         dt = current_time - old_time
-        dt_old = old_time - older_time
-        act_old = self.old_action
+        Kp = 0.75
+        KI = 0.5
+        self.integral = self.integral + e*dt
+        return Kp*e + KI*self.integral
+        '''
 
-        Kp = 0.1
-        TI = 5
-        TD = 5
-
-        KI = Kp / TI
-        KD = Kp * TD
-        # NOTE: Removed the old_action + ...
-        #   This makes this return a differential (i.e., dAct = compute)
-        if dt_old > 0:
-            return Kp*(e-e_old) + KI*e*dt + KD*((e-e_old)/dt) + KD*((e_old-e_older)/dt_old)
-        else:
-            return Kp*(e-e_old) + KI*e*dt + 0.5*KD*((e-e_old)/dt)
 
     ## DO NOT MODIFY THIS SECTION
     #   This is automatically called in the simulation loop
@@ -111,13 +145,10 @@ class Device(object):
     # Device state based on information from controller
     def setDeviceState(self, cont_obj: Controller):
         temp_state = cont_obj.current_action + self.current_state
-        noise = random.uniform(0.85, 1.15)
-        delay = random.randint(0,1)
+        noise = random.uniform(0.9, 1.1)
+        delay = random.randint(0,4)
 
-        delay=0
-        noise=1
-
-        if (delay==0):
+        if (delay!=0):
             temp_state = temp_state*noise
         else:
             temp_state = self.current_state
@@ -165,7 +196,6 @@ if __name__=="__main__":
                               device_obj.old_state,
                               device_obj.current_state)
         controller_obj.setAction(action)
-        print(action)
 
         device_obj.setDeviceState(controller_obj)
 
