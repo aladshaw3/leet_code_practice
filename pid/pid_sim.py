@@ -63,16 +63,30 @@ for i in range(0,80):
                                 old_error, old_action, dt, dt_old)
 
     # What pilot does with action
+
+    # smooth PID
     new_action += old_action
+
+    # exact P
+    #new_action = old_action + new_error
+
     noise = random.uniform(0.75, 1.25)
-    #print(noise)
+    #noise=1
 
     #print(new_action)
+    delay = random.randint(0, 1)
 
     older_measured_value = old_measured_value
     old_measured_value = current_measured_value
-    current_measured_value = new_action*noise
-    old_action = new_action
+
+    # if there is no delay (act immediately)
+    if (delay == 0):
+        current_measured_value = new_action*noise
+        old_action = new_action
+    # Otherwise, do not change from prior values
+    else:
+        current_measured_value = old_action*noise
+        old_action = old_action
 
     #print(current_measured_value)
     #print(current_setpoint)
