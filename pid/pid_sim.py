@@ -68,9 +68,9 @@ for i in range(0,80):
     new_action += old_action
 
     # exact P
-    #new_action = old_action + new_error
+    new_action = old_action + new_error
 
-    noise = random.uniform(0.75, 1.25)
+    noise = random.uniform(0.85, 1.15)
     #noise=1
 
     #print(new_action)
@@ -78,6 +78,7 @@ for i in range(0,80):
 
     older_measured_value = old_measured_value
     old_measured_value = current_measured_value
+
 
     # if there is no delay (act immediately)
     if (delay == 0):
