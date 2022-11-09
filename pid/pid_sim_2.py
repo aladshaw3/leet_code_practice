@@ -170,11 +170,13 @@ if __name__=="__main__":
     dev_set = []
     x_set = []
     target_set = []
+    error_set = []
 
     act_set.append(controller_obj.current_action)
     dev_set.append(device_obj.current_state)
     x_set.append(time_obj.current_time)
     target_set.append(target_obj.current_target)
+    error_set.append(target_obj.current_target-device_obj.current_state)
 
     # simulation loop
     for i in range(0,80):
@@ -203,6 +205,24 @@ if __name__=="__main__":
         act_set.append(controller_obj.current_action)
         x_set.append(time_obj.current_time)
         target_set.append(target_obj.current_target)
+        error_set.append(target_obj.current_target-device_obj.current_state)
+
+    # Avg Error Calc
+    i=0
+    sum = 0
+    count = 0
+    for e in error_set:
+
+        if (x_set[i] >= 15 and x_set[i] < 20):
+            count +=1
+            sum +=e
+
+        if (x_set[i] >= 35 and x_set[i] < 40):
+            count+=1
+            sum+=e
+        i+=1
+
+    print("Average Steady-State Error: " + str(sum/count))
 
     print("DONE")
     xvals = list(x_set)
