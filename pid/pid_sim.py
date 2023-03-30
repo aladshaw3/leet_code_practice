@@ -1,4 +1,5 @@
 import numpy as np
+import random
 
 # Must have this installed
 import matplotlib.pyplot as plt
@@ -7,10 +8,12 @@ import matplotlib.pyplot as plt
 def compute_action(Kp, TI, TD, e, e_old, e_older, action_old, dt, dt_old):
     KI = Kp / TI
     KD = Kp * TD
+    # NOTE: Removed the old_action + ...
+    #   This makes this return a differential (i.e., dAct = compute)
     if dt_old > 0:
-        return action_old + Kp*(e-e_old) + KI*e*dt + KD*((e-e_old)/dt) + KD*((e_old-e_older)/dt_old)
+        return 0 + Kp*(e-e_old) + KI*e*dt + KD*((e-e_old)/dt) + KD*((e_old-e_older)/dt_old)
     else:
-        return action_old + Kp*(e-e_old) + KI*e*dt + 0.5*KD*((e-e_old)/dt)
+        return 0 + Kp*(e-e_old) + KI*e*dt + 0.5*KD*((e-e_old)/dt)
 
 # Defines error
 def error_func(r, y):
@@ -41,7 +44,7 @@ x_set.append(old_time)
 target_set.append(current_setpoint)
 
 # test loop
-for i in range(0,1000):
+for i in range(0,80):
     new_time = (i+1)/2
     dt = new_time - time
     dt_old = time - old_time
@@ -50,8 +53,8 @@ for i in range(0,1000):
         current_setpoint = 2
 
     new_error = error_func(current_setpoint, current_measured_value)
-    if abs(new_error) < 1e-4:
-        break
+    #if abs(new_error) < 0.01:
+    #    break
 
     error = error_func(current_setpoint, old_measured_value)
     old_error = error_func(current_setpoint, older_measured_value)
@@ -59,10 +62,37 @@ for i in range(0,1000):
     new_action = compute_action(Kp, TI, TD, new_error, error,
                                 old_error, old_action, dt, dt_old)
 
+    # What pilot does with action
+
+    # smooth PID
+    new_action += old_action
+
+    # exact P
+    new_action = old_action + new_error
+
+    noise = random.uniform(0.85, 1.15)
+    #noise=1
+
+    #print(new_action)
+    delay = random.randint(0, 1)
+
     older_measured_value = old_measured_value
     old_measured_value = current_measured_value
-    current_measured_value = new_action
-    old_action = new_action
+
+
+    # if there is no delay (act immediately)
+    if (delay == 0):
+        current_measured_value = new_action*noise
+        old_action = new_action
+    # Otherwise, do not change from prior values
+    else:
+        current_measured_value = old_action*noise
+        old_action = old_action
+
+    #print(current_measured_value)
+    #print(current_setpoint)
+
+    #print()
 
     y_set.append(new_action)
     x_set.append(new_time)

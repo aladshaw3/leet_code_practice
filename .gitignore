@@ -5,6 +5,12 @@ __pycache__/
 
 # C extensions
 *.so
+*.o
+*.d
+
+# Executables
+*.app
+*.exe
 
 # Distribution / packaging
 .Python
