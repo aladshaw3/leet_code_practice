@@ -1,4 +1,4 @@
-name: Eigen Examples
+name: ODE Eigen Solver
 
 on:
   push:
