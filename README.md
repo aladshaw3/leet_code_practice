@@ -1,5 +1,6 @@
 [![Matlab](https://github.com/aladshaw3/leet_code_practice/actions/workflows/matlab-script.yml/badge.svg)](https://github.com/aladshaw3/leet_code_practice/actions/workflows/matlab-script.yml)
 [![Eigen](https://github.com/aladshaw3/leet_code_practice/actions/workflows/eigen-examples.yml/badge.svg)](https://github.com/aladshaw3/leet_code_practice/actions/workflows/eigen-examples.yml)
+[![ODEEigen](https://github.com/aladshaw3/leet_code_practice/actions/workflows/eigen-ode.yml/badge.svg)](https://github.com/aladshaw3/leet_code_practice/actions/workflows/eigen-ode.yml)
 
 # leet_code_practice
 
