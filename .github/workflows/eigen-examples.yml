@@ -43,21 +43,21 @@ jobs:
           conda install -c conda-forge doxygen pytest
           conda list
 
-    - name: Install Eigen Master
-      shell: bash -l {0}
-      run: |
-        cd ..
-        git clone https://gitlab.com/libeigen/eigen.git
+      - name: Install Eigen Master
+        shell: bash -l {0}
+        run: |
+          cd ..
+          git clone https://gitlab.com/libeigen/eigen.git
         
-    - name: Build Tests
-      shell: bash -l {0}
-      run: |
-        conda activate spansil
-        cd test_eigen
-        make
-    - name: Run Tests
-      shell: bash -l {0}
-      run: |
-        conda activate spansil
-        cd test_eigen
-        pytest
+      - name: Build Tests
+        shell: bash -l {0}
+        run: |
+          conda activate spansil
+          cd test_eigen
+          make
+      - name: Run Tests
+        shell: bash -l {0}
+        run: |
+          conda activate spansil
+          cd test_eigen
+          pytest
