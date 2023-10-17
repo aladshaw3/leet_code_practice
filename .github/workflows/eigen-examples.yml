@@ -1,0 +1,63 @@
+name: Eigen Examples
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: '30 5 * * 5'
+
+jobs:
+  unit-tests:
+    name: Run Build Tests (py${{ matrix.python-version }}/${{ matrix.os }})
+    runs-on: ${{ matrix.os-version }}
+    strategy:
+      matrix:
+        python-version:
+          - '3.11'
+        os:
+          - linux
+        include:
+          - os: linux
+            os-version: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@main
+        with:
+          submodules: 'recursive'
+
+      - name: Activate spansil environment (${{ matrix.python-version }})
+        uses: conda-incubator/setup-miniconda@v2.2.0
+        with:
+          python-version: ${{ matrix.python-version }}
+          channels: conda-forge,defaults
+          channel-priority: true
+          activate-environment: spansil
+
+      - name: Install dependencies into environment
+        shell: bash -l {0}
+        run: |
+          conda init
+          conda activate spansil
+          conda install -c conda-forge doxygen pytest
+          conda list
+
+    - name: Install Eigen Master
+      shell: bash -l {0}
+      run: |
+        cd ..
+        git clone https://gitlab.com/libeigen/eigen.git
+        
+    - name: Build Tests
+      shell: bash -l {0}
+      run: |
+        conda activate spansil
+        cd test_eigen
+        make
+    - name: Run Tests
+      shell: bash -l {0}
+      run: |
+        conda activate spansil
+        cd test_eigen
+        pytest
