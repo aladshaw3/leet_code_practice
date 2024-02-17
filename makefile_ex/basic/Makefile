@@ -17,7 +17,7 @@
 #	This command is using g++ to link objects main and hello together
 #	to create an executable named output.app
 output: main.o hello.o
-	g++ main.o hello.o -o output.app
+	g++ main.o hello.o -o output
 
 # Now we should define how main.o and hello.o are created
 #	The '-c' flag instructs the build to just compile the
@@ -28,14 +28,14 @@ output: main.o hello.o
 #	main.cpp includes the header 'hello.h'. Thus, if we change something
 # in that header, this may not get rebuilt.
 main.o: main.cpp
-	g++ -c main.cpp
+	g++ -c main.cpp -std=c++11
 
 hello.o: hello.cpp hello.h
-	g++ -c hello.cpp
+	g++ -c hello.cpp -std=c++11
 
 # This is a target witout dependencies
 #	it will run the commands given below to remove
 #	the object files and executable
 clean:
 	rm *.o
-	rm output.app
+	rm output
